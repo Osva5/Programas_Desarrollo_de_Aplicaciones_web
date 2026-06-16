@@ -358,25 +358,25 @@ Uso de bucles `FOR...NEXT` anidados para generar dinámicamente una tabla de mul
 A continuación se presentan las capturas de pantalla que muestran la ejecución de cada ejemplo en el navegador. (Agregue aquí las imágenes de los resultados obtenidos al ejecutar los archivos `.asp` en el servidor IIS).
 
 ### Ejemplo 1 — HTML puro en ASP
-![Ejemplo 1](media/ejemplo1.png)
+![Ejemplo 1](Practica_3/media/ejemplo1.png)
 
 ### Ejemplo 2 — Ciclo FOR...NEXT
-![Ejemplo 2](media/ejemplo2.png)
+![Ejemplo 2](Practica_3/media/ejemplo2.png)
 
 ### Ejemplo 3 — Suma acumulativa
-![Ejemplo 3](media/ejemplo3.png)
+![Ejemplo 3](Practica_3/media/ejemplo3.png)
 
 ### Ejemplo 4 — Tamaño dinámico de fuente
-![Ejemplo 4](media/ejemplo4.png)
+![Ejemplo 4](Practica_3/media/ejemplo4.png)
 
 ### Ejemplo 5 — Fecha y hora del servidor
-![Ejemplo 5](media/ejemplo5.png)
+![Ejemplo 5](Practica_3/media/ejemplo5.png)
 
 ### Ejemplo 6 — Condicional IF...THEN...ELSE
-![Ejemplo 6](media/ejemplo6.png)
+![Ejemplo 6](Practica_3/media/ejemplo6.png)
 
 ### Ejemplo 7 — Tabla de multiplicar
-![Ejemplo 7](media/ejemplo7.png)
+![Ejemplo 7](Practica_3/media/ejemplo7.png)
 
 ---
 
