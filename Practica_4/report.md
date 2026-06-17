@@ -9,17 +9,17 @@ Desarrollo de Aplicaciones Web
 EUGENIA ERICA VERA CERVANTES
 
 **ALUMNO:**  
-MONTEALEGRE NAHUACATL, OSVALDO 
+MONTEALEGRE NAHUACATL OSVALDO 
 
 **FECHA DE ENTREGA:**  
-Lunes, 16 de junio de 2026
+Lunes, 17 de junio de 2026
 
 ---
 
 
 ## Introducción
 
-Se presentan cuatro ejemplos (del 8 al 11) que incrementan en complejidad: desde un formulario que envía datos a una página ASP separada, hasta un formulario autoprocesado en una sola página con validación condicional y múltiples tipos de controles HTML (texto, checkbox, select, radio, textarea). Cada ejemplo cuenta con su archivo `.asp` y, cuando aplica, su correspondiente `.html` estático mostrando la salida renderizada.
+Se presentan cinco ejemplos (del 8 al 12) que incrementan en complejidad: desde un formulario que envía datos a una página ASP separada, hasta un formulario autoprocesado en una sola página con validación condicional y múltiples tipos de controles HTML (texto, checkbox, select, radio, textarea). Cada ejemplo cuenta con su archivo `.asp` y, cuando aplica, su correspondiente `.html` estático mostrando la salida renderizada.
 
 El objetivo principal es comprender cómo ASP captura y procesa los datos enviados por el usuario mediante el método POST y el objeto `Request.Form`.
 
@@ -45,9 +45,9 @@ Para ejecutar los ejemplos de esta práctica siga estos pasos:
 1. Asegúrese de que IIS esté instalado y en ejecución en su equipo Windows.
 2. Copie todos los archivos `.asp` y `.html` de la práctica al directorio raíz del sitio web (`C:\inetpub\wwwroot\App_web\`).
 3. Abra un navegador web y acceda a la siguiente URL:
-   - `http://localhost/App_web/ejem_8.asp` (para el primer ejemplo)
-   - Cambie el número del archivo para acceder a los demás ejemplos (ejem_9.asp, ejem_10.asp, ejem_11.asp).
-4. Para los ejemplos que incluyen formularios (8, 9, 10 y 11), complete los campos y presione "Enviar" para ver el procesamiento de datos en ASP.
+    - `http://localhost/App_web/ejem_8.asp` (para el primer ejemplo)
+    - Cambie el número del archivo para acceder a los demás ejemplos (ejem_9.asp, ejem_10.asp, ejem_11.asp, ejem_12.asp).
+4. Para los ejemplos que incluyen formularios (8, 9, 10, 11 y 12), complete los campos y presione "Enviar" para ver el procesamiento de datos en ASP.
 5. Si desea modificar algún ejemplo, edite el archivo `.asp` correspondiente con un editor de texto y guarde los cambios; luego recargue la página en el navegador para ver el resultado actualizado.
 
 ---
@@ -312,6 +312,67 @@ El ejemplo más completo: un formulario con diversos tipos de controles (texto, 
 
 ---
 
+## Ejemplo 12: Formulario con método GET y Request.QueryString
+
+**Archivo:** `ejem_12.asp`
+
+Este ejemplo utiliza el método `GET` en lugar de `POST`. Los datos se envían en la URL y se recuperan mediante `Request.QueryString`. Incluye un cuadro de lista de selección múltiple y botones de radio, con validación condicional que verifica si se seleccionaron al menos tres seminarios.
+
+```asp
+<%@ Language="VBScript" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejemplo simple 12</title>
+</head>
+<body>
+    <% If Request.QueryString = "" Then %>
+        <form method="GET" action="ejem_12.asp">
+            <font size="4">Seminarios del segundo trimestre</font><br><br>
+            <select name="Seminarios" multiple size="9">
+                <option>Tratamiento de señal</option>
+                <option>Compiladores ascendentes</option>
+                <option>Programacion orientada a objetos</option>
+                <option>Diseño VLSI</option>
+                <option>Ingles cientifico</option>
+                <option>Nivel OSI</option>
+                <option>Arquitectura paralelas</option>
+                <option>Programacion concurrente</option>
+                <option>Comercio electronico</option>
+            </select><br><br>
+
+            Número de seminarios realizados en el primer cuatrimestre <br><br>
+            <input type="radio" checked name="NumSeminarios" value="tres">Tres
+            <input type="radio" name="NumSeminarios" value="cuatro">Cuatro
+            <input type="radio" name="NumSeminarios" value="cinco">Cinco
+            <p align="center"><input type="submit" name="BotonEnviar" value="Enviar"></p>
+        </form>
+    <% Else %>
+        <h1>Datos introducidos por el usuario:</h1><br>
+        <% 
+        For Each V_Entrada In Request.QueryString
+            For Indice = 1 To Request.QueryString(V_Entrada).Count 
+                Response.Write V_Entrada & " = " & Request.QueryString(V_Entrada)(Indice) & "<br>"
+            Next
+        Next 
+        %>
+        <br>
+        <% If Request.QueryString("Seminarios").Count < 3 Then %>
+            Es obligatorio matricularse en al menos tres seminarios
+            <% If Request.QueryString("NumSeminarios") <> "tres" Then %>
+                aunque usted haya cursado <%=Request.QueryString("NumSeminarios")%> en el primer cuatrimestre
+            <% End If %>
+        <% End If %>
+    <% End If %>        
+</body>
+</html>
+```
+
+**Explicación:** A diferencia de los ejemplos anteriores que usaban `POST` y `Request.Form`, este ejemplo emplea `GET` y `Request.QueryString`. Los datos del formulario se envían como parte de la URL (query string). La condición `Request.QueryString = ""` determina si el formulario ha sido enviado. El campo `Seminarios` (select múltiple) puede contener varios valores, los cuales se iteran con `FOR EACH`. La validación condicional verifica si se seleccionaron menos de 3 seminarios y muestra un mensaje personalizado según la opción de `NumSeminarios` elegida.
+
+---
+
 ## Pruebas de ejecución
 
 A continuación se presentan las capturas de pantalla que muestran la ejecución de cada ejemplo en el navegador. (Agregue aquí las imágenes de los resultados obtenidos al ejecutar los archivos `.asp` en el servidor IIS).
@@ -332,6 +393,10 @@ A continuación se presentan las capturas de pantalla que muestran la ejecución
 ### Ejemplo 11 — Formulario completo con validación
 ![Ejemplo 11](media/ejemplo6.png)
 ![Ejemplo 11](media/ejemplo7.png)
+
+### Ejemplo 12 — Formulario con método GET y Request.QueryString
+![Ejemplo 11](media/ejemplo8.png)
+![Ejemplo 11](media/ejemplo9.png)
 
 ---
 
