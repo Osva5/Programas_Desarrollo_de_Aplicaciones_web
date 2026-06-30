@@ -1,0 +1,147 @@
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --dark-bg: #212529;
+}
+
+body {
+    background-color: #f5f6fa;
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+    padding: 3rem 1rem !important;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    letter-spacing: -0.5px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.4em 0.7em;
+}
+
+.modal-header {
+    border-radius: 10px 10px 0 0;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1.5px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+footer {
+    margin-top: auto;
+}
+
+.card-img-top {
+    border-radius: 10px 10px 0 0;
+}
+
+.slot-disponible {
+    background: #198754;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.82rem;
+    transition: all 0.15s ease;
+}
+
+.slot-disponible:hover {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.slot-ocupado {
+    background: #dc3545;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.82rem;
+    opacity: 0.6;
+}
+
+.slot-seleccionado {
+    background: #0d6efd !important;
+    color: white !important;
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.3);
+}
+
+.fc .fc-button-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #0056b3 !important;
+}
+
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+}
+
+.list-group-item {
+    border-radius: 8px !important;
+    margin-bottom: 4px;
+}
+
+.bg-dark .nav-link {
+    color: rgba(255,255,255,0.85);
+}
+
+.bg-dark .nav-link:hover {
+    color: #fff;
+}
