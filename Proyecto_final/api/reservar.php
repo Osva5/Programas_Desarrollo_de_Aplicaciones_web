@@ -71,6 +71,17 @@ $reservacionId = $reservacionModel->crear([
 
 $historial->registrar($_SESSION['usuario_id'], 'Reservación creada', "Reservación #$reservacionId - {$cancha['nombre']} - $fecha $horaInicio");
 
+require_once __DIR__ . '/../classes/Mailer.php';
+$mailer = new Mailer();
+$mailer->nuevaReservacionAdmin(
+    MAIL_FROM,
+    $_SESSION['usuario_nombre'],
+    $cancha['nombre'],
+    $fecha,
+    $horaInicio,
+    $horaFin
+);
+
 $_SESSION['mensaje'] = 'Reservación creada exitosamente. Procede al pago para confirmarla.';
 $_SESSION['tipo_mensaje'] = 'success';
 header('Location: ../pages/pago.php?reservacion_id=' . $reservacionId);

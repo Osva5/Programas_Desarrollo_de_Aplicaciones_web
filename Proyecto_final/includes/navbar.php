@@ -60,8 +60,13 @@ if (isset($_SESSION['usuario_id'])) {
             <ul class="navbar-nav">
                 <?php if (isset($_SESSION['usuario_id'])): ?>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?>
+                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                        <?php if ($usuarioActual && $usuarioActual['foto_perfil']): ?>
+                        <img src="<?php echo SITE_URL; ?>/assets/img/usuarios/<?php echo $usuarioActual['foto_perfil']; ?>" alt="" class="rounded-circle" style="width:28px;height:28px;object-fit:cover;">
+                        <?php else: ?>
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <?php endif; ?>
+                        <?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><span class="dropdown-item-text text-muted small"><?php echo $_SESSION['usuario_rol']; ?></span></li>

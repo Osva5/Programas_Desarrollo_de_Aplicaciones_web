@@ -80,6 +80,31 @@ class Usuario
         ]);
     }
 
+    public function eliminar($id)
+    {
+        $sql = "DELETE FROM usuarios WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function obtenerPorEmail($email)
+    {
+        $sql = "SELECT * FROM usuarios WHERE email = :email LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':email' => $email]);
+        return $stmt->fetch();
+    }
+
+    public function cambiarPasswordPorEmail($email, $password)
+    {
+        $sql = "UPDATE usuarios SET password = :password WHERE email = :email";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':password' => password_hash($password, PASSWORD_DEFAULT),
+            ':email' => $email
+        ]);
+    }
+
     public function emailExiste($email)
     {
         $sql = "SELECT COUNT(*) FROM usuarios WHERE email = :email";
