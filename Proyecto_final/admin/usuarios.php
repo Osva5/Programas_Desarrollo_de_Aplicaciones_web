@@ -18,6 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $usuarioModel->cambiarPassword($_POST['id'], $_POST['password']);
         $historial->registrar($_SESSION['usuario_id'], 'Password cambiado', "Password de usuario #{$_POST['id']} cambiado");
         $_SESSION['mensaje'] = 'Contraseña actualizada.'; $_SESSION['tipo_mensaje'] = 'success';
+    } elseif ($accion === 'eliminar') {
+        if ($_POST['id'] == $_SESSION['usuario_id']) {
+            $_SESSION['mensaje'] = 'No puedes eliminar tu propio usuario.';
+            $_SESSION['tipo_mensaje'] = 'danger';
+        } else {
+            $usuarioModel->eliminar($_POST['id']);
+            $historial->registrar($_SESSION['usuario_id'], 'Usuario eliminado', "Usuario #{$_POST['id']} eliminado");
+            $_SESSION['mensaje'] = 'Usuario eliminado.'; $_SESSION['tipo_mensaje'] = 'warning';
+        }
     }
     header('Location: usuarios.php'); exit;
 }
@@ -57,6 +66,13 @@ require_once __DIR__ . '/../includes/header.php';
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalPassword<?php echo $u['id']; ?>">
                         <i class="bi bi-key"></i>
                     </button>
+                    <?php if ($u['id'] != $_SESSION['usuario_id']): ?>
+                    <form method="POST" style="display:inline" onsubmit="return confirm('¿Eliminar usuario #<?php echo $u['id']; ?> (<?php echo htmlspecialchars($u['nombre']); ?>)?\nSe eliminarán también sus reservaciones.')">
+                        <input type="hidden" name="accion" value="eliminar">
+                        <input type="hidden" name="id" value="<?php echo $u['id']; ?>">
+                        <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                    <?php endif; ?>
                 </td>
             </tr>
             <?php endforeach; ?>

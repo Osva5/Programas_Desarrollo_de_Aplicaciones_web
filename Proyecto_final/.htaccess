@@ -1,4 +1,11 @@
 RewriteEngine On
+RewriteBase /
+
+# Si se accede a un directorio sin archivo, servir index.php desde ahí
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*/?)$ $1index.php [L]
+
+# Front controller: todo lo que no sea archivo o directorio va a index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

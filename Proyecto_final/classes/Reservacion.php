@@ -96,15 +96,18 @@ class Reservacion
     public function verificarDisponibilidad($canchaId, $fecha, $horaInicio, $horaFin, $excluirId = null)
     {
         $this->autoCancelarExpiradas();
+        $horaFin = $horaFin ?: date('H:i:s', strtotime($horaInicio) + 3600);
         $sql = "SELECT COUNT(*) FROM reservaciones 
                 WHERE cancha_id = :cancha_id 
                 AND fecha = :fecha 
-                AND hora_inicio = :hora_inicio
+                AND hora_inicio < :hora_fin
+                AND hora_fin > :hora_inicio
                 AND estado IN ('pendiente', 'confirmada')";
         $params = [
             ':cancha_id' => $canchaId,
             ':fecha' => $fecha,
-            ':hora_inicio' => $horaInicio
+            ':hora_inicio' => $horaInicio,
+            ':hora_fin' => $horaFin
         ];
         if ($excluirId) {
             $sql .= " AND id != :excluir_id";

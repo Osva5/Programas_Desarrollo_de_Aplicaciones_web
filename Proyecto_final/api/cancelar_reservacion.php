@@ -15,6 +15,18 @@ if ($id) {
     if ($reservacion && ($reservacion['usuario_id'] == $_SESSION['usuario_id'] || esAdmin())) {
         $reservacionModel->actualizarEstado($id, 'cancelada');
         $historial->registrar($_SESSION['usuario_id'], 'Reservación cancelada', "Reservación #$id cancelada");
+
+        require_once __DIR__ . '/../classes/Mailer.php';
+        $mailer = new Mailer();
+        $mailer->cancelacionReservacion(
+            $reservacion['usuario_nombre'],
+            $reservacion['email'],
+            $reservacion['cancha_nombre'],
+            $reservacion['fecha'],
+            $reservacion['hora_inicio'],
+            $reservacion['hora_fin']
+        );
+
         $_SESSION['mensaje'] = 'Reservación cancelada exitosamente.';
         $_SESSION['tipo_mensaje'] = 'warning';
     } else {

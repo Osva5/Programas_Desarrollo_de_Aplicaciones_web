@@ -23,8 +23,9 @@ class Precio
         $diaSemana = date('N', strtotime($fecha));
         $sql = "SELECT * FROM precios 
                 WHERE cancha_id = :cancha_id AND activo = 1
-                AND dia_semana_inicio <= :dia AND dia_semana_fin >= :dia
-                AND :hora BETWEEN hora_inicio AND hora_fin
+                AND (dia_semana_inicio IS NULL OR dia_semana_inicio <= :dia)
+                AND (dia_semana_fin IS NULL OR dia_semana_fin >= :dia)
+                AND (hora_inicio IS NULL OR hora_fin IS NULL OR (:hora BETWEEN hora_inicio AND hora_fin))
                 LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([

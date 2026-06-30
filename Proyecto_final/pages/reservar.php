@@ -217,6 +217,14 @@ function cargarSlots(fecha) {
     document.getElementById('fechaReserva').value = fecha;
     document.getElementById('btnReservar').disabled = true;
 
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    if (new Date(fecha + 'T00:00:00') < hoy) {
+        document.getElementById('slotsContainer').innerHTML =
+            '<div class="alert alert-danger mb-0">No puedes seleccionar una fecha pasada.</div>';
+        return;
+    }
+
     const container = document.getElementById('slotsContainer');
     container.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div> Cargando horarios...</div>';
 

@@ -14,7 +14,7 @@ $historial = new Historial();
 
 function subirImagen($archivo, $id) {
     $targetDir = CANCHAS_IMG_DIR;
-    if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+    if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
     $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
     $permitidas = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
     if (!in_array($extension, $permitidas)) return null;

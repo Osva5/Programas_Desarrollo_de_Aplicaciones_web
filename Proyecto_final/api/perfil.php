@@ -29,7 +29,7 @@ if ($accion === 'actualizar') {
 
     if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === UPLOAD_ERR_OK) {
         $targetDir = USUARIOS_IMG_DIR;
-        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+        if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
         $ext = strtolower(pathinfo($_FILES['foto_perfil']['name'], PATHINFO_EXTENSION));
         $permitidas = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
         if (!in_array($ext, $permitidas)) {

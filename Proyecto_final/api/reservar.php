@@ -24,6 +24,22 @@ if (!$canchaId || !$fecha || !$horaInicio) {
     exit;
 }
 
+$hoy = date('Y-m-d');
+$horaActual = date('H:i:s');
+
+if ($fecha < $hoy) {
+    $_SESSION['mensaje'] = 'No se pueden hacer reservaciones en fechas pasadas.';
+    $_SESSION['tipo_mensaje'] = 'danger';
+    header('Location: ../pages/reservar.php?cancha_id=' . $canchaId);
+    exit;
+}
+if ($fecha === $hoy && $horaInicio < $horaActual) {
+    $_SESSION['mensaje'] = 'No se pueden reservar horarios que ya pasaron.';
+    $_SESSION['tipo_mensaje'] = 'danger';
+    header('Location: ../pages/reservar.php?cancha_id=' . $canchaId);
+    exit;
+}
+
 $cancha = $canchaModel->obtenerPorId($canchaId);
 if (!$cancha || $cancha['estado'] !== 'disponible') {
     $_SESSION['mensaje'] = 'La cancha no está disponible.';
@@ -32,7 +48,7 @@ if (!$cancha || $cancha['estado'] !== 'disponible') {
     exit;
 }
 
-if (!$reservacionModel->verificarDisponibilidad($canchaId, $fecha, $horaInicio, null)) {
+if (!$reservacionModel->verificarDisponibilidad($canchaId, $fecha, $horaInicio, $horaFin)) {
     $_SESSION['mensaje'] = 'El horario seleccionado ya está reservado.';
     $_SESSION['tipo_mensaje'] = 'danger';
     header('Location: ../pages/reservar.php?cancha_id=' . $canchaId);
@@ -54,6 +70,17 @@ $reservacionId = $reservacionModel->crear([
 ]);
 
 $historial->registrar($_SESSION['usuario_id'], 'Reservación creada', "Reservación #$reservacionId - {$cancha['nombre']} - $fecha $horaInicio");
+
+require_once __DIR__ . '/../classes/Mailer.php';
+$mailer = new Mailer();
+$mailer->nuevaReservacionAdmin(
+    MAIL_FROM,
+    $_SESSION['usuario_nombre'],
+    $cancha['nombre'],
+    $fecha,
+    $horaInicio,
+    $horaFin
+);
 
 $_SESSION['mensaje'] = 'Reservación creada exitosamente. Procede al pago para confirmarla.';
 $_SESSION['tipo_mensaje'] = 'success';

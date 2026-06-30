@@ -5,12 +5,13 @@ class Mailer
 {
     public function enviar($para, $asunto, $cuerpoHtml)
     {
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: " . MAIL_FROM_NAME . " <" . MAIL_FROM . ">\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion();
+        $mensaje = $this->armarMensaje($cuerpoHtml);
+        return $this->enviarSMTP($para, $asunto, $mensaje);
+    }
 
-        $mensaje = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
+    private function armarMensaje($cuerpoHtml)
+    {
+        return '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><style>
             body { font-family: Arial, sans-serif; background: #f5f6fa; margin: 0; padding: 20px; }
             .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
             .header { background: linear-gradient(135deg, #0d6efd, #0056b3); color: white; padding: 30px; text-align: center; }
@@ -27,8 +28,116 @@ class Mailer
                 <div class="footer">&copy; ' . date('Y') . ' ' . SITE_NAME . ' - Todos los derechos reservados</div>
             </div>
         </body></html>';
+    }
 
-        return mail($para, $asunto, $mensaje, $headers);
+    private function enviarSMTP($para, $asunto, $mensaje)
+    {
+        $boundary = 'boundary_' . md5(uniqid('', true));
+
+        $cabeceras = "MIME-Version: 1.0\r\n";
+        $cabeceras .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $cabeceras .= "From: " . MAIL_FROM_NAME . " <" . MAIL_FROM . ">\r\n";
+        $cabeceras .= "To: " . $para . "\r\n";
+        $cabeceras .= "Subject: " . $asunto . "\r\n";
+        $cabeceras .= "Date: " . date('r') . "\r\n";
+        $cabeceras .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+        $cuerpoCompleto = $cabeceras . "\r\n" . $mensaje;
+
+        $errno = 0;
+        $errstr = '';
+        $protocolo = defined('MAIL_SMTP_SECURE') && MAIL_SMTP_SECURE === 'tls' ? 'tcp' : 'tcp';
+        $puerto = defined('MAIL_PORT') ? MAIL_PORT : 587;
+
+        $conexion = @fsockopen($protocolo . '://' . MAIL_HOST, $puerto, $errno, $errstr, 30);
+        if (!$conexion) {
+            error_log("Mailer: No se pudo conectar a " . MAIL_HOST . ":$puerto - $errstr");
+            return false;
+        }
+
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '220') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, "EHLO " . gethostname() . "\r\n");
+        $respuesta = $this->leerRespuesta($conexion);
+
+        if (defined('MAIL_SMTP_SECURE') && MAIL_SMTP_SECURE === 'tls') {
+            fputs($conexion, "STARTTLS\r\n");
+            $respuesta = fgets($conexion, 515);
+            if (substr($respuesta, 0, 3) !== '220') {
+                fclose($conexion);
+                return false;
+            }
+            stream_socket_enable_crypto($conexion, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+
+            fputs($conexion, "EHLO " . gethostname() . "\r\n");
+            $this->leerRespuesta($conexion);
+        }
+
+        fputs($conexion, "AUTH LOGIN\r\n");
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '334') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, base64_encode(MAIL_USER) . "\r\n");
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '334') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, base64_encode(MAIL_PASS) . "\r\n");
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '235') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, "MAIL FROM:<" . MAIL_FROM . ">\r\n");
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '250') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, "RCPT TO:<" . $para . ">\r\n");
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '250') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, "DATA\r\n");
+        $respuesta = fgets($conexion, 515);
+        if (substr($respuesta, 0, 3) !== '354') {
+            fclose($conexion);
+            return false;
+        }
+
+        fputs($conexion, $cuerpoCompleto . "\r\n.\r\n");
+        $respuesta = fgets($conexion, 515);
+
+        fputs($conexion, "QUIT\r\n");
+        fclose($conexion);
+
+        return substr($respuesta, 0, 3) === '250';
+    }
+
+    private function leerRespuesta($conexion)
+    {
+        $respuesta = '';
+        while ($linea = fgets($conexion, 515)) {
+            $respuesta .= $linea;
+            if (isset($linea[3]) && $linea[3] === ' ') {
+                break;
+            }
+        }
+        return $respuesta;
     }
 
     public function bienvenida($nombre, $email)
@@ -76,5 +185,37 @@ class Mailer
             </div>
             <p style="text-align:center;"><a href="' . SITE_URL . '/admin/reservaciones.php" class="btn">Ver en Admin</a></p>';
         return $this->enviar($adminEmail, $asunto, $cuerpo);
+    }
+
+    public function cancelacionReservacion($nombre, $email, $cancha, $fecha, $horaInicio, $horaFin)
+    {
+        $asunto = 'Reservación Cancelada - ' . SITE_NAME;
+        $cuerpo = '<h2>Reservación Cancelada, ' . htmlspecialchars($nombre) . '</h2>
+            <p>Tu reservación ha sido cancelada.</p>
+            <div class="info">
+                <p><strong>Cancha:</strong> ' . htmlspecialchars($cancha) . '</p>
+                <p><strong>Fecha:</strong> ' . date('d/m/Y', strtotime($fecha)) . '</p>
+                <p><strong>Horario:</strong> ' . substr($horaInicio, 0, 5) . ' - ' . substr($horaFin, 0, 5) . '</p>
+            </div>
+            <p>Si requieres más información, contáctanos.</p>
+            <p style="text-align:center;"><a href="' . SITE_URL . '/pages/mis_reservaciones.php" class="btn">Mis Reservaciones</a></p>';
+        return $this->enviar($email, $asunto, $cuerpo);
+    }
+
+    public function recuperacionPassword($nombre, $email, $token)
+    {
+        $asunto = 'Recuperación de Contraseña - ' . SITE_NAME;
+        $enlace = SITE_URL . '/pages/restablecer.php?token=' . urlencode($token);
+        $cuerpo = '<h2>Hola ' . htmlspecialchars($nombre) . '</h2>
+            <p>Recibimos una solicitud para restablecer tu contraseña en <strong>' . SITE_NAME . '</strong>.</p>
+            <p>Haz clic en el siguiente botón para crear una nueva contraseña:</p>
+            <p style="text-align:center;"><a href="' . $enlace . '" class="btn">Restablecer Contraseña</a></p>
+            <p>Si no solicitaste esto, ignora este mensaje.</p>
+            <div class="info">
+                <p><strong>Este enlace expira en 1 hora.</strong></p>
+            </div>
+            <p>Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+            <p style="font-size:12px; word-break:break-all;">' . htmlspecialchars($enlace) . '</p>';
+        return $this->enviar($email, $asunto, $cuerpo);
     }
 }
