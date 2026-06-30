@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($accion === 'generar') {
         $canchaId = $_POST['cancha_id'];
         $horarioModel->eliminarPorCancha($_POST['cancha_id']);
-        $canchaModel->obtenerPorId($canchaId);
         for ($dia = 1; $dia <= 7; $dia++) {
             $horaInicio = $_POST["hora_inicio_$dia"] ?? '';
             $horaFin = $_POST["hora_fin_$dia"] ?? '';

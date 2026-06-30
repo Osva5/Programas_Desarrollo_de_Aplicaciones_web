@@ -132,7 +132,7 @@ INSERT INTO precios (cancha_id, tipo_precio, nombre, precio, dia_semana_inicio, 
 
 -- Horarios individuales por hora (08:00 - 22:00) para todas las canchas
 -- Cada bloque es de 1 hora: 08:00-09:00, 09:00-10:00, ..., 21:00-22:00
--- 9 canchas x 7 dias x 14 bloques = 784 registros
+-- 9 canchas x 7 dias x 14 bloques = 882 registros
 INSERT INTO horarios (cancha_id, dia_semana, hora_inicio, hora_fin, estado) VALUES
 (1, 1, '08:00:00', '09:00:00', 'disponible'), (1, 1, '09:00:00', '10:00:00', 'disponible'), (1, 1, '10:00:00', '11:00:00', 'disponible'), (1, 1, '11:00:00', '12:00:00', 'disponible'), (1, 1, '12:00:00', '13:00:00', 'disponible'), (1, 1, '13:00:00', '14:00:00', 'disponible'), (1, 1, '14:00:00', '15:00:00', 'disponible'), (1, 1, '15:00:00', '16:00:00', 'disponible'), (1, 1, '16:00:00', '17:00:00', 'disponible'), (1, 1, '17:00:00', '18:00:00', 'disponible'), (1, 1, '18:00:00', '19:00:00', 'disponible'), (1, 1, '19:00:00', '20:00:00', 'disponible'), (1, 1, '20:00:00', '21:00:00', 'disponible'), (1, 1, '21:00:00', '22:00:00', 'disponible'),
 (1, 2, '08:00:00', '09:00:00', 'disponible'), (1, 2, '09:00:00', '10:00:00', 'disponible'), (1, 2, '10:00:00', '11:00:00', 'disponible'), (1, 2, '11:00:00', '12:00:00', 'disponible'), (1, 2, '12:00:00', '13:00:00', 'disponible'), (1, 2, '13:00:00', '14:00:00', 'disponible'), (1, 2, '14:00:00', '15:00:00', 'disponible'), (1, 2, '15:00:00', '16:00:00', 'disponible'), (1, 2, '16:00:00', '17:00:00', 'disponible'), (1, 2, '17:00:00', '18:00:00', 'disponible'), (1, 2, '18:00:00', '19:00:00', 'disponible'), (1, 2, '19:00:00', '20:00:00', 'disponible'), (1, 2, '20:00:00', '21:00:00', 'disponible'), (1, 2, '21:00:00', '22:00:00', 'disponible'),
